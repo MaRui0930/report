@@ -1,43 +1,42 @@
 import axios from 'axios'
 import {Message} from "element-ui";
 
-export const project_url = '/report';
-// export const server_url = 'http://47.94.36.126:8081';
-
-
 axios.interceptors.response.use(response => {
-    if (response.data.code === 0) {
-        Message.success({message: response.data.message});
-    } else {
-        Message.error({message:response.data.message})
+    if ((response.data.message != null) && (response.data.code !== 0)) {
+        Message.error({message: response.data.message, duration: 2000})
+        return
     }
     return response.data;
-}, () => {})
-
-
+}, () => {
+})
 
 export const getRequest = (url, params) => {
     return axios({
+        baseURL: '/report',
         method: 'get',
-        url: `${project_url}${url}`,
-        params: params
+        url,
+        params
     })
 }
-export const postRequest = (url, params) => {
+export const postRequest = (url, data) => {
     return axios({
+        baseURL: '/report',
         method: 'post',
-        url: `${project_url}${url}`,
-        data: params
+        url,
+        data
     })
 }
 
-export const postRequestByFile=(url,params)=>{
+export const getGithubInfo = (access_token) => {
     return axios({
-        method: 'post',
-        url: `${project_url}${url}`,
-        data: params,
+        method: 'get',
+        url: '/getGithubInfo',
         headers: {
-            'Content-Type': 'multipart/form-data'
+            // "Content-Type": "application/x-www-form-urlencoded",
+            accept: 'application/json',
+            Authorization: `token ${access_token}`
         }
     })
 }
+
+
